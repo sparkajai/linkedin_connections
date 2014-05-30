@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block title %}welcome {% endblock %}
+
+{% block content %}
+{% for x in data %}
+<div class="span2">{% csrf_token %}
+{% if x.im %}
+<img src='{{ x.im }}'/>
+{% else %}
+<img src="{% static 'fbfriendsapp/img/sil.jpeg' %}" style="height:80px;width:80px"/>
+{% endif %}
+{% if x.im %}
+<div class="label_class">
+<label class='{{ x.id }} name'>{{ x.full_name }}</label>
+</div>
+{% else %}
+<div class="label_class">
+<label class='{{ x.id }} name'>private</label>
+</div>
+{% endif %}
+<input type='button' value='Edit' name='edit' onclick="edit(this)" class='btn btn-primary edit' style="float:right">
+</div><br/>
+{% endfor %}
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+		var edit = function(object){
+		divName = $(object).siblings('.label_class').text();
+		className = $(object).siblings()[2].children[0].className.split(' ')[0]
+		$(object).siblings('.name').remove();
+		$(object).siblings('.label_class').html("<input type='text' value='"+divName+"' id='"+className+"'>");
+		$(object).val('Submit');
+		$(object).removeClass('edit');
+		$(object).toggleClass('save')
+		$(object).attr('onclick','submit(this)')
+		}
+
+	var submit = function(object){
+		siblings_value = $(object).siblings()[2].children[0].value
+		siblings_id = $(object).siblings()[2].children[0].id
+		if(siblings_value!==''){
+			$.ajax({
+			  type: "POST",
+			  url: "/update/",
+			  data: { name: siblings_value, id: siblings_id, csrfmiddlewaretoken:'{{ csrf_token }}' }
+			})
+			  .done(function( msg ) {
+			    alert( "Data Saved: " + msg );
+			    $(object).siblings('.label_class').html("<label class='"+siblings_id+" name'>"+siblings_value+"</label>");
+			    $(object).val('Edit');
+				$(object).removeClass('save');
+				$(object).toggleClass('edit')
+				$(object).attr('onclick','edit(this)')
+			  });
+				}	
+		}
+</script>
+
+
+{% endblock %}
