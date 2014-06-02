@@ -22,3 +22,5 @@ Collect all your linkedin collections
 click on the register link to register a new user or register using linkedin, 
 
 after logging in all your connections will be displayed and you may edit their names and save into the database.
+
+5) access url /linkedin/ to view the rest API data.

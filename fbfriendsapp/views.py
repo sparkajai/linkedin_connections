@@ -8,6 +8,9 @@ from django.db.models.signals import post_save
 from fbfriendsapp.models import *
 from social_auth.models import *
 
+from fbfriendsapp.serializers import LinkedinSerializer
+from rest_framework import viewsets
+
 def index(request):
 	return render_to_response('home.html',
                           context_instance=RequestContext(request))
@@ -105,3 +108,10 @@ def update(request):
 	a.full_name = name
 	a.save()
 	return HttpResponse('success')
+
+class LinkedinViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = LinkedinUserFriendsData.objects.all()
+    serializer_class = LinkedinSerializer
